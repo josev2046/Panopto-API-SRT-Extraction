@@ -1,0 +1,52 @@
+@startuml
+autonumber
+skinparam Style strictuml
+skinparam SequenceMessageAlignment center
+
+actor "Python Script\n(Extractor)" as Client
+participant "Panopto OAuth2\n(/oauth2/connect/token)" as OAuth
+participant "Panopto Legacy Auth\n(/api/v1/auth/legacyLogin)" as LegacyAuth
+participant "Panopto SRT Handler\n(/GenerateSRT.ashx)" as SRTHandler
+database "Local Storage /\nVector DB" as Storage
+
+title Panopto Transcript Extraction & Ingestion Pipeline
+
+group Step 1: OAuth2 Authentication
+    Client -> OAuth: POST request with Client ID, Secret, and Credentials
+    OAuth --> Client: Return Access Token (Bearer)
+end
+
+group Step 2: Legacy Session Cookie Exchange
+    Client -> LegacyAuth: GET request with Header "Authorization: Bearer <access_token>"
+    LegacyAuth --> Client: Return 200 OK + Set-Cookie Header (".ASPXAUTH")
+end
+
+group Step 3: Transcript Retrieval & Language Detection
+    loop Iterate through Language IDs ['1', '0', 'English_UK', 'English_USA']
+        Client -> SRTHandler: GET ?id={SessionID}&language={LangID}\n(Pass .ASPXAUTH Cookie)
+        SRTHandler --> Client: HTTP 200 Response
+        
+        alt Response Body is Non-Empty
+            note over Client: SRT Transcript Track Found
+        else Response Body is Empty
+            note over Client: Continue to Next Language ID
+        end
+    end
+end
+
+group Step 4: Data Cleansing
+    note over Client
+        Apply Regular Expressions:
+        1. Remove timestamp lines (\d{2}:\d{2}:\d{2},\d{3} --> ...)
+        2. Strip standalone sequence numbers
+        3. Remove system disclaimers (e.g. [Auto-generated...])
+        4. Strip residual HTML tags
+        5. Normalise whitespace into a continuous body of text
+    end note
+end
+
+group Step 5: Serialisation & Storage
+    Client -> Storage: Export structured JSON file\n{source, session_id, language_track, transcript}
+end
+
+@enduml
