@@ -75,4 +75,5 @@ When deploying this solution in a production or enterprise environment, two oper
 2. **Unversioned legacy handler** — Because `GenerateSRT.ashx` is an un-versioned legacy handler, its behaviour is not strictly bound by Panopto's public REST API contract. While this remains the documented customer path for transcript extraction, implementation details and endpoint structures should be monitored during major platform upgrades.
 
 #hopethishelps
+
 /JV
