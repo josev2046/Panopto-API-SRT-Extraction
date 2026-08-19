@@ -1,5 +1,7 @@
 # Extracting Panopto Transcripts for LLM and RAG Pipelines
 
+[![DOI](https://zenodo.org/badge/1339248516.svg)](https://doi.org/10.5281/zenodo.22010161)
+
 Large Language Models (LLMs) and Retrieval-Augmented Generation (RAG) pipelines require clean, structured text to function effectively. Extracting closed-caption transcripts from Panopto for this purpose presents a unique technical challenge: the platform's public REST API does not currently feature a native endpoint for exporting transcripts directly as plain text or JSON.
 
 While caption uploads and deletions can be managed via the standard API, downloading existing caption tracks relies on a legacy web handler known as `GenerateSRT.ashx`. This article outlines the documented, programmatic approach to navigating this legacy handler, sanitising the output, and serialising the transcript data into a structured JSON payload.
