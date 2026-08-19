@@ -73,3 +73,6 @@ When deploying this solution in a production or enterprise environment, two oper
 1. **SSO limitations** — User accounts relying on Single Sign-On (SSO) providers, such as Google Workspace, Azure AD, or SAML, cannot utilise the password grant type directly, as it cannot traverse external login screens. A local Panopto service account must be provisioned specifically for the automated pipeline.
 
 2. **Unversioned legacy handler** — Because `GenerateSRT.ashx` is an un-versioned legacy handler, its behaviour is not strictly bound by Panopto's public REST API contract. While this remains the documented customer path for transcript extraction, implementation details and endpoint structures should be monitored during major platform upgrades.
+
+#hopethishelps
+</JV>
